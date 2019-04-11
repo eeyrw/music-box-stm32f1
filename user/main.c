@@ -92,6 +92,7 @@ int main()
     xTaskCreate(vTaskUsb, "Task usb", 1024, NULL, 1, NULL);
 
     vTaskStartScheduler();
+    TestProcess();
 
     while (1)
         ;

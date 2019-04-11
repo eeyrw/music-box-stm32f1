@@ -7,12 +7,15 @@
 
 .func SynthAsm
 SynthAsm:
+bx lr
 .endfunc
 
 .func GenDecayEnvlopeAsm
 GenDecayEnvlopeAsm:
+bx lr
 .endfunc
 
 .func NoteOnAsm
 NoteOnAsm:
+bx lr
 .endfunc

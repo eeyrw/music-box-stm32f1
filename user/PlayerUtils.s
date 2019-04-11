@@ -6,8 +6,10 @@
 
 .func UpdateTick
 UpdateTick:
+bx lr
 .endfunc
 
 .func PlayNoteTimingCheck
 PlayNoteTimingCheck:
+bx lr
 .endfunc

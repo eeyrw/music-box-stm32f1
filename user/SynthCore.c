@@ -29,14 +29,14 @@ void NoteOnC(Synthesizer* synth,uint8_t note)
 	uint8_t lastSoundUnit = synth->lastSoundUnit;
 	SoundUnit* soundUnits = synth->SoundUnitList;
 
-	disable_interrupts();
+	//disable_interrupts();
 	soundUnits[lastSoundUnit].increment = WaveTable_Celesta_C5_Increment[note&0x7F];
 	soundUnits[lastSoundUnit].wavetablePos = 0;
 	soundUnits[lastSoundUnit].waveTableAddress = (uint32_t)WaveTable_Celesta_C5;
 	soundUnits[lastSoundUnit].waveTableLen = WAVETABLE_CELESTA_C5_LEN;
 	soundUnits[lastSoundUnit].waveTableLoopLen = WAVETABLE_CELESTA_C5_LOOP_LEN;
 	soundUnits[lastSoundUnit].waveTableAttackLen = WAVETABLE_CELESTA_C5_ATTACK_LEN;
-	enable_interrupts();
+	//enable_interrupts();
 
 	lastSoundUnit++;
 	if (lastSoundUnit== POLY_NUM)

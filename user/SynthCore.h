@@ -8,16 +8,16 @@
 typedef struct _SoundUnit
 {
 	uint32_t  wavetablePos;
-	uint8_t envelopeLevel;
-	uint16_t envelopePos;
-	uint16_t increment;
-	int16_t val;
-	int16_t sampleVal;
 	uint32_t waveTableAddress;
 	uint32_t waveTableLen;
 	uint32_t waveTableLoopLen;
 	uint32_t waveTableAttackLen;
-
+	uint32_t envelopePos;
+	uint32_t increment;
+	int32_t val;
+	int32_t sampleVal;
+	uint32_t envelopeLevel;
+	uint32_t envelopeLeve2l;
 }SoundUnit;
 
 

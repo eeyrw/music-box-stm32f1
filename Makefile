@@ -40,6 +40,10 @@ ASM_SRC  += $(USER_DIR)/Synth.s
 SRC      += $(USER_DIR)/main.c
 SRC      += $(USER_DIR)/SynthCore.c
 SRC      += $(USER_DIR)/Player.c
+SRC      += $(USER_DIR)/score.c
+SRC      += $(USER_DIR)/EnvelopTable.c
+SRC      += $(USER_DIR)/WaveTable_Celesta_C5.c
+SRC      += $(USER_DIR)/WaveTable_Celesta_C6.c
 SRC      += $(USER_DIR)/AlgorithmTest.c
 SRC      += $(USER_DIR)/hal/uart_log.c
 SRC      += $(USER_DIR)/hal/stm32_it.c
@@ -73,7 +77,7 @@ MC_FLAGS = -mcpu=$(MCU)
 
 AS_FLAGS = $(MC_FLAGS) -g -gdwarf-2 -mthumb  -Wa,-amhls=$(<:.s=.lst)
 CP_FLAGS = $(MC_FLAGS) $(OPT) -fdata-sections -ffunction-sections -g -gdwarf-2 -mthumb -fomit-frame-pointer -Wall -fverbose-asm -Wa,-ahlms=$(<:.c=.lst) $(DEFS)
-LD_FLAGS = $(MC_FLAGS) -g -gdwarf-2 -mthumb -nostartfiles -Xlinker -T$(LINK_SCRIPT) -Wl,-Map=$(PROJECT_NAME).map,--cref,--no-warn-mismatch,--gc-sections
+LD_FLAGS = $(MC_FLAGS) -g -specs=nano.specs -specs=nosys.specs -gdwarf-2 -mthumb -nostartfiles -Xlinker -T$(LINK_SCRIPT) -Wl,-Map=$(PROJECT_NAME).map,--cref,--no-warn-mismatch,--gc-sections
 
 #
 # makefile rules
