@@ -41,8 +41,12 @@
 
 .equ ENVELOP_LEN,256
 .equ POLY_NUM,5
-.equ pMixOut,0
-.equ pLastSoundUnit,4
+.equ pMixOut,SoundUnitSize*POLY_NUM
+.equ pLastSoundUnit,pMixOut+4
+
+.equ WAVETABLE_CELESTA_C5_LEN,2608
+.equ WAVETABLE_CELESTA_C5_ATTACK_LEN,1998
+.equ WAVETABLE_CELESTA_C5_LOOP_LEN,610
 
 .func SynthAsm
 SynthAsm:
@@ -81,7 +85,7 @@ loopSynth:
 subs loopIndex,loopIndex,#1 @ set n = n-1
 add pSoundUnit,pSoundUnit,#SoundUnitSize
 bne loopSynth
-str mixOut,[pSoundUnit,pMixOut]
+str mixOut,[pSoundUnit]
 ldmfd sp!,{r4-r11,pc}
 .endfunc
 
@@ -128,5 +132,56 @@ ldmfd sp!,{r4-r11,pc}
 
 .func NoteOnAsm
 NoteOnAsm:
-bx lr
+pSynth .req r0
+note .req r1
+stmfd sp!,{r4-r11,lr}
+@ void NoteOnC(Synthesizer* synth,uint8_t note)
+@ {
+@ 	uint8_t lastSoundUnit = synth->lastSoundUnit;
+@ 	SoundUnit* soundUnits = synth->SoundUnitList;
+
+@ 	//disable_interrupts();
+@ 	soundUnits[lastSoundUnit].increment = WaveTable_Celesta_C5_Increment[note&0x7F];
+@ 	soundUnits[lastSoundUnit].wavetablePos = 0;
+@ 	soundUnits[lastSoundUnit].waveTableAddress = (uint32_t)WaveTable_Celesta_C5;
+@ 	soundUnits[lastSoundUnit].waveTableLen = WAVETABLE_CELESTA_C5_LEN;
+@ 	soundUnits[lastSoundUnit].waveTableLoopLen = WAVETABLE_CELESTA_C5_LOOP_LEN;
+@ 	soundUnits[lastSoundUnit].waveTableAttackLen = WAVETABLE_CELESTA_C5_ATTACK_LEN;
+@ 	//enable_interrupts();
+
+@ 	lastSoundUnit++;
+@ 	if (lastSoundUnit== POLY_NUM)
+@ 		lastSoundUnit = 0;
+
+@     synth->lastSoundUnit=lastSoundUnit;
+@ }
+ldr r5,[pSynth,#pLastSoundUnit]
+mov r6,#SoundUnitSize
+mul r5,r5,r6
+add pSynth,pSynth,r5
+and note,note,#0x7F
+lsl note,note,#1
+ldr r5,=WaveTable_Celesta_C5_Increment
+ldrh r5,[r5,note]
+uxth r5,r5
+str r5,[pSynth,#pIncrement]
+mov r5,#0
+str r5,[pSynth,#pWavetablePos]
+ldr r5,=WaveTable_Celesta_C5
+str r5,[pSynth,#pWaveTableAddress]
+ldr r5,=#WAVETABLE_CELESTA_C5_LEN
+str r5,[pSynth,#pWaveTableLen]
+ldr r5,=#WAVETABLE_CELESTA_C5_LOOP_LEN
+str r5,[pSynth,#pWaveTableLoopLen]
+ldr r5,=#WAVETABLE_CELESTA_C5_ATTACK_LEN
+str r5,[pSynth,#pWaveTableAttackLen]
+
+ldr r5,[pSynth,#pLastSoundUnit]
+add r5,r5,#1
+cmp r5,#POLY_NUM
+bne updateLastSoundUnitEnd
+mov r5,#0
+updateLastSoundUnitEnd:
+str r5,[pSynth,#pLastSoundUnit]
+ldmfd sp!,{r4-r11,pc}
 .endfunc
