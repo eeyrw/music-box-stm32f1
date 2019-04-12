@@ -50,20 +50,21 @@
 
 .func SynthAsm
 SynthAsm:
-stmfd sp!,{r4-r11,lr}
-pSoundUnit .req r0
+stmfd sp!,{r0-r1,r4-r11,lr}
+pSoundUnit .req r1
 loopIndex .req r4
 mixOut .req r8
 
 mov loopIndex,#POLY_NUM
 mov mixOut,#0
+mov pSoundUnit,r0
 
 loopSynth:
     ldr r5,[pSoundUnit,#pWaveTableAddress]
     ldr r6,[pSoundUnit,#pWavetablePos]
-    lsr r6,r6,#7 @wavetablePos*=wavetablePos/256*2
-    ldrh r6,[r5,r6] @ Load sample to r6
-    sxth r6,r6 @Extend 16bit signed sample to 32bit signed.
+    lsr r6,r6,#8 @wavetablePos*=wavetablePos/256
+    lsl r6,r6,#1 @wavetablePos/=2
+    ldrsh r6,[r5,r6] @ Load signed 16bit sample to r6
     str r6,[pSoundUnit,#pSampleVal]
     ldr r7,[pSoundUnit,#pEnvelopeLevel]
     mul r7,r6,r7 @sample*envelope/256
@@ -75,9 +76,11 @@ loopSynth:
     ldr r5,[pSoundUnit,#pIncrement]
     add r6,r5,r6
     ldr r5,[pSoundUnit,#pWaveTableLen]
-    lsl r5,r5,#8 @pWaveTableLen*=pWaveTableLen*256    
-    cmp r6,r5
+    lsl r5,r5,#8 @pWaveTableLen*=256    
+    cmp r5,r6
     bhi wavePosUpdateEnd  @bhi : HI	C = 1 and Z = 0	Higher, unsigned
+    ldr r5,[pSoundUnit,#pWaveTableLoopLen]
+    lsl r5,r5,#8 @waveTableLoopLen*=256
     sub r6,r6,r5
     wavePosUpdateEnd:
     str r6,[pSoundUnit,#pWavetablePos]
@@ -85,16 +88,17 @@ loopSynth:
 subs loopIndex,loopIndex,#1 @ set n = n-1
 add pSoundUnit,pSoundUnit,#SoundUnitSize
 bne loopSynth
-str mixOut,[pSoundUnit]
-ldmfd sp!,{r4-r11,pc}
+mov pSoundUnit,r0
+str mixOut,[pSoundUnit,pMixOut]
+ldmfd sp!,{r0-r1,r4-r11,pc}
 .endfunc
 
 .func GenDecayEnvlopeAsm
 GenDecayEnvlopeAsm:
-pSoundUnit .req r0
-loopIndex .req r4
-stmfd sp!,{r4-r11,lr}
-mov loopIndex,#POLY_NUM
+pSoundUnitGenEnv .req r0
+loopIndexGenEnv .req r4
+stmfd sp!,{r0-r1,r4-r11,lr}
+mov loopIndexGenEnv,#POLY_NUM
 loopGenDecayEnvlope:
 @ void GenDecayEnvlopeC(Synthesizer* synth)
 @ {
@@ -109,32 +113,33 @@ loopGenDecayEnvlope:
 @ 		}
 @ 	}
 @ }
-    ldr r5,[pSoundUnit,#pWavetablePos]
-    ldr r6,[pSoundUnit,#pWaveTableAttackLen]
+    ldr r5,[pSoundUnitGenEnv,#pWavetablePos]
+    ldr r6,[pSoundUnitGenEnv,#pWaveTableAttackLen]
     lsl r6,r6,#8 @WaveTableAttackLen*=WaveTableAttackLen*256    
     cmp r5,r6
-    bhi conditionEnd @bhi : HI	C = 1 and Z = 0	Higher, unsigned
-    ldr r5,[pSoundUnit,#pEnvelopePos]
+    blo conditionEnd @ blo Lower (unsigned < )
+    ldr r5,[pSoundUnitGenEnv,#pEnvelopePos]
     ldr r6,=#(ENVELOP_LEN-1)
     cmp r5,r6
-    bls conditionEnd @bls: LS	C = 0 or   Z = 1	Lower or same, unsigned
+    bhs conditionEnd @ bhs Higher or same (unsigned >= )
     ldr r6,=EnvelopeTable
     ldrb r6,[r6,r5]  @ Load envelope to r6
-    uxtb r6,r6 @Extend 8bit unsigned sample to 32bit unsigned.
-    str r6,[pSoundUnit,#pEnvelopeLevel]
+    str r6,[pSoundUnitGenEnv,#pEnvelopeLevel]
     add r5,r5,#1
+    str r5,[pSoundUnitGenEnv,#pEnvelopePos]
     conditionEnd:
-subs loopIndex,loopIndex,#1 @ set n = n-1
-add pSoundUnit,pSoundUnit,#SoundUnitSize
-bne loopSynth
-ldmfd sp!,{r4-r11,pc}
+subs loopIndexGenEnv,loopIndexGenEnv,#1 @ set n = n-1
+add pSoundUnitGenEnv,pSoundUnitGenEnv,#SoundUnitSize
+bne loopGenDecayEnvlope
+ldmfd sp!,{r0-r1,r4-r11,pc}
 .endfunc
 
 .func NoteOnAsm
 NoteOnAsm:
-pSynth .req r0
+pSynth .req r2
 note .req r1
-stmfd sp!,{r4-r11,lr}
+stmfd sp!,{r0-r2,r4-r11,lr}
+mov pSynth,r0
 @ void NoteOnC(Synthesizer* synth,uint8_t note)
 @ {
 @ 	uint8_t lastSoundUnit = synth->lastSoundUnit;
@@ -163,7 +168,6 @@ and note,note,#0x7F
 lsl note,note,#1
 ldr r5,=WaveTable_Celesta_C5_Increment
 ldrh r5,[r5,note]
-uxth r5,r5
 str r5,[pSynth,#pIncrement]
 mov r5,#0
 str r5,[pSynth,#pWavetablePos]
@@ -176,6 +180,7 @@ str r5,[pSynth,#pWaveTableLoopLen]
 ldr r5,=#WAVETABLE_CELESTA_C5_ATTACK_LEN
 str r5,[pSynth,#pWaveTableAttackLen]
 
+mov pSynth,r0
 ldr r5,[pSynth,#pLastSoundUnit]
 add r5,r5,#1
 cmp r5,#POLY_NUM
@@ -183,5 +188,5 @@ bne updateLastSoundUnitEnd
 mov r5,#0
 updateLastSoundUnitEnd:
 str r5,[pSynth,#pLastSoundUnit]
-ldmfd sp!,{r4-r11,pc}
+ldmfd sp!,{r0-r2,r4-r11,pc}
 .endfunc

@@ -49,17 +49,19 @@ void SynthC(Synthesizer* synth)
 {
     synth->mixOut=0;
 	int16_t* pWaveTable;
+	uint32_t waveTablePosInt;
 	SoundUnit* soundUnits = synth->SoundUnitList;
 
     for(uint32_t i=0;i<POLY_NUM;i++)
     {
 		pWaveTable=(int16_t*)soundUnits[i].waveTableAddress;
-        soundUnits[i].val=soundUnits[i].envelopeLevel*pWaveTable[soundUnits[i].wavetablePos>>8]/256;
-        soundUnits[i].sampleVal=pWaveTable[soundUnits[i].wavetablePos>>8];
+		waveTablePosInt= (soundUnits[i].wavetablePos)>>8;
+        soundUnits[i].val=((int32_t)soundUnits[i].envelopeLevel)*pWaveTable[waveTablePosInt]/256;
+        soundUnits[i].sampleVal=pWaveTable[waveTablePosInt];
 		uint32_t waveTablePos=soundUnits[i].increment+
                              soundUnits[i].wavetablePos;
 
-        uint32_t waveTablePosInt= waveTablePos>>8;
+        waveTablePosInt= waveTablePos>>8;
         if(waveTablePosInt>=soundUnits[i].waveTableLen)
            waveTablePosInt-=soundUnits[i].waveTableLoopLen;
         soundUnits[i].wavetablePos= waveTablePosInt<<8|(0xFF&waveTablePos);

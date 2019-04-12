@@ -90,12 +90,13 @@ int main()
 
     debug("start main ");
     const char *pcTextForTask1 = "Task1 is running\r\n";
+    TestProcess();
 
     xTaskCreate(vTaskFunction, "Task 1", 64, (void *)pcTextForTask1, 1, NULL);
     xTaskCreate(vTaskUsb, "Task usb", 1024, NULL, 1, NULL);
 
     vTaskStartScheduler();
-    TestProcess();
+    
 
     while (1)
         ;
