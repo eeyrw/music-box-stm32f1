@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "jlink",
+            "cwd": "${workspaceRoot}",
+            "executable": "./music-box-stm32f1.elf",
+            "name": "Debug (J-Link)",
+            "device": "STM32F103C8",
+            "interface": "swd",
+            "ipAddress": null,
+            "serialNumber": null,
+        }
+    ]
+}

@@ -297,9 +297,8 @@ const uint8_t Midi_CDC_Device_StringProduct[MIDI_CDC_DEV_SIZ_STRING_PRODUCT] =
     MIDI_CDC_DEV_SIZ_STRING_PRODUCT,          /* bLength */
     USB_STRING_DESCRIPTOR_TYPE,        /* bDescriptorType */
     /* Product name: "STM32 Midi CDC Device" */
-    'S', 0, 'T', 0, 'M', 0, '3', 0, '2', 0, ' ', 0, 'M', 0, 'I', 0,
-    'D', 0, 'I', 0, ' ', 0, 'D', 0, 'e', 0, 'v', 0, 'i', 0, 'c', 0,
-    'e', 0, 
+    'Y', 0, 'U', 0, 'A', 0, 'N', 0, '\'', 0, 'S', 0, ' ', 0, 'M', 0,
+    'U', 0, 'S', 0, 'I', 0, 'C', 0, ' ', 0, 'B', 0, 'O', 0, 'X', 0, 
   };
 
 uint8_t Midi_CDC_Device_StringSerial[MIDI_CDC_DEV_SIZ_STRING_SERIAL] =
