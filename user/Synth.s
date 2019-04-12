@@ -61,11 +61,7 @@ loopSynth:
     ldrh r6,[r5,r6] @ Load sample to r6
     sxth r6,r6 @Extend 16bit signed sample to 32bit signed.
     str r6,[pSoundUnit,#pSampleVal]
-    ldr r5,[pSoundUnit,#pEnvelopePos]
-    ldr r7,=EnvelopeTable
-    ldrb r7,[r7,r5]  @ Load envelope to r6
-    uxtb r7,r7 @Extend 8bit unsigned sample to 32bit unsigned.
-    str r7,[pSoundUnit,#pEnvelopeLevel]
+    ldr r7,[pSoundUnit,#pEnvelopeLevel]
     mul r7,r6,r7 @sample*envelope/256
     asr r7,r7,#8
     str r7,[pSoundUnit,#pVal]
@@ -77,21 +73,57 @@ loopSynth:
     ldr r5,[pSoundUnit,#pWaveTableLen]
     lsl r5,r5,#8 @pWaveTableLen*=pWaveTableLen*256    
     cmp r6,r5
-    bgt wavePosUpdateEnd
+    bhi wavePosUpdateEnd  @bhi : HI	C = 1 and Z = 0	Higher, unsigned
     sub r6,r6,r5
     wavePosUpdateEnd:
     str r6,[pSoundUnit,#pWavetablePos]
 
 subs loopIndex,loopIndex,#1 @ set n = n-1
 add pSoundUnit,pSoundUnit,#SoundUnitSize
-BNE loopSynth
+bne loopSynth
 str mixOut,[pSoundUnit,pMixOut]
 ldmfd sp!,{r4-r11,pc}
 .endfunc
 
 .func GenDecayEnvlopeAsm
 GenDecayEnvlopeAsm:
-bx lr
+pSoundUnit .req r0
+loopIndex .req r4
+stmfd sp!,{r4-r11,lr}
+mov loopIndex,#POLY_NUM
+loopGenDecayEnvlope:
+@ void GenDecayEnvlopeC(Synthesizer* synth)
+@ {
+@     SoundUnit* soundUnits = synth->SoundUnitList;
+@ 	for (uint32_t i = 0; i < POLY_NUM; i++)
+@ 	{
+@ 		if((soundUnits[i].wavetablePos>>8) >=soundUnits[i].waveTableAttackLen &&
+@ 				soundUnits[i].envelopePos <sizeof(EnvelopeTable)-1)
+@ 		{
+@ 			soundUnits[i].envelopeLevel = EnvelopeTable[soundUnits[i].envelopePos];
+@ 			soundUnits[i].envelopePos += 1;
+@ 		}
+@ 	}
+@ }
+    ldr r5,[pSoundUnit,#pWavetablePos]
+    ldr r6,[pSoundUnit,#pWaveTableAttackLen]
+    lsl r6,r6,#8 @WaveTableAttackLen*=WaveTableAttackLen*256    
+    cmp r5,r6
+    bhi conditionEnd @bhi : HI	C = 1 and Z = 0	Higher, unsigned
+    ldr r5,[pSoundUnit,#pEnvelopePos]
+    ldr r6,=#(ENVELOP_LEN-1)
+    cmp r5,r6
+    bls conditionEnd @bls: LS	C = 0 or   Z = 1	Lower or same, unsigned
+    ldr r6,=EnvelopeTable
+    ldrb r6,[r6,r5]  @ Load envelope to r6
+    uxtb r6,r6 @Extend 8bit unsigned sample to 32bit unsigned.
+    str r6,[pSoundUnit,#pEnvelopeLevel]
+    add r5,r5,#1
+    conditionEnd:
+subs loopIndex,loopIndex,#1 @ set n = n-1
+add pSoundUnit,pSoundUnit,#SoundUnitSize
+bne loopSynth
+ldmfd sp!,{r4-r11,pc}
 .endfunc
 
 .func NoteOnAsm

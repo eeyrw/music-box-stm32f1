@@ -15,8 +15,8 @@ typedef struct _Player
 {
     uint32_t  currentTick;
 	uint32_t  lastScoreTick;
-    uint8_t status;
-	uint8_t  decayGenTick;
+    uint32_t status;
+	uint32_t  decayGenTick;
     uint8_t* scorePointer;
     Synthesizer mainSynthesizer;
 } Player;

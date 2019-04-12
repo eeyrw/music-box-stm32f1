@@ -47,10 +47,10 @@ void vTaskFunction(void *pvParameters)
     while (1)
     {
         GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-        debug("led on ");
+        //debug("led on ");
         vTaskDelay(100);
         GPIO_SetBits(GPIOC, GPIO_Pin_13);
-        debug("led off ");
+        //debug("led off ");
         vTaskDelay(100);
     }
 }
