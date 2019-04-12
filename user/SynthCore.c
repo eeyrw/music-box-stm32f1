@@ -26,7 +26,7 @@ void SynthInit(Synthesizer* synth)
 //#ifdef RUN_TEST
 void NoteOnC(Synthesizer* synth,uint8_t note)
 {
-	uint8_t lastSoundUnit = synth->lastSoundUnit;
+	uint32_t lastSoundUnit = synth->lastSoundUnit;
 	SoundUnit* soundUnits = synth->SoundUnitList;
 
 	//disable_interrupts();
