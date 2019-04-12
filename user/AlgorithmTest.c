@@ -24,8 +24,8 @@ int32_t abs_s32(int32_t num)
 void PrintParameters(Synthesizer* synth)
 {
     SoundUnit* soundUnits = synth->SoundUnitList;
-    printf("MixOut:%lu\n",synth->mixOut);
-
+    printf("MixOut:%d\n",synth->mixOut);
+    printf("LastSoundUnit:%d\n",synth->lastSoundUnit);
     printf("%12s","Chn Val");
     for(uint8_t k=0;k<POLY_NUM;k++)
     {
@@ -135,11 +135,17 @@ void TestSynth(void)
 {
     uint32_t errorTimes=0;
     printf("~~~~~~~Start testing synthesizer.~~~~~~~\n");
-    for(uint32_t i=0;i<POLY_NUM;i++)
+    for(uint32_t i=40;i<40+POLY_NUM;i++)
     {
         NoteOnC(&synthesizerC,i%56);
         NoteOnAsm(&synthesizerASM,i%56);
     }
+    printf("After NoteOn Test:\n");
+        printf("Synth C:\n");
+        PrintParameters(&synthesizerC);
+        printf("Synth ASM:\n");
+        PrintParameters(&synthesizerASM);
+
     for(uint32_t i=0;i<TEST_LOOP_NUN;i++)
     {
         SynthAsm(&synthesizerASM);
