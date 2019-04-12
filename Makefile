@@ -46,19 +46,19 @@ SRC      += $(USER_DIR)/EnvelopTable.c
 SRC      += $(USER_DIR)/WaveTable_Celesta_C5.c
 SRC      += $(USER_DIR)/WaveTable_Celesta_C6.c
 SRC      += $(USER_DIR)/AlgorithmTest.c
-SRC      += $(USER_DIR)/hal/uart_log.c
-SRC      += $(USER_DIR)/hal/gcc-stdio-retarget.c
-SRC      += $(USER_DIR)/hal/stm32_it.c
-SRC      += $(USER_DIR)/hal/hal.c
-SRC      += $(USER_DIR)/usb/usb_desc.c
-SRC      += $(USER_DIR)/usb/usb_endp.c
-SRC      += $(USER_DIR)/usb/usb_istr.c
-SRC      += $(USER_DIR)/usb/usb_prop.c
-SRC      += $(USER_DIR)/usb/usb_pwr.c
+SRC      += $(USER_DIR)/Hal/uart_log.c
+SRC      += $(USER_DIR)/Hal/gcc-stdio-retarget.c
+SRC      += $(USER_DIR)/Hal/stm32_it.c
+SRC      += $(USER_DIR)/Hal/hal.c
+SRC      += $(USER_DIR)/Usb/usb_desc.c
+SRC      += $(USER_DIR)/Usb/usb_endp.c
+SRC      += $(USER_DIR)/Usb/usb_istr.c
+SRC      += $(USER_DIR)/Usb/usb_prop.c
+SRC      += $(USER_DIR)/Usb/usb_pwr.c
 
 # user include
 INCLUDE_DIRS  = $(USER_DIR)
-INCLUDE_DIRS  += $(USER_DIR)/usb
+INCLUDE_DIRS  += $(USER_DIR)/Usb
 INCLUDE_DIRS  += $(USER_DIR)/Hal
 
 # include sub makefiles
