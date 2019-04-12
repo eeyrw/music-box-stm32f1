@@ -37,6 +37,7 @@ LINK_SCRIPT  = $(ROOT_DIR)/stm32_flash.ld
 # user specific
 SRC       =
 ASM_SRC  += $(USER_DIR)/Synth.s
+ASM_SRC  += $(USER_DIR)/PlayerUtils.s
 SRC      += $(USER_DIR)/main.c
 SRC      += $(USER_DIR)/SynthCore.c
 SRC      += $(USER_DIR)/Player.c
