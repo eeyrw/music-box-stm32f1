@@ -38,6 +38,16 @@ void uart_log_init(void)
 
     USART_Cmd(USART2, ENABLE);
 }
+void uart_putchar(unsigned int c)
+{
+    while (USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
+    USART_SendData(USART2, (uint16_t)c);   
+}
+
+int uart_getchar(void)
+{
+    return 0;
+}
 
 static void printchar(char **str, unsigned int c)
 {
@@ -45,6 +55,7 @@ static void printchar(char **str, unsigned int c)
     USART_SendData(USART2, (uint16_t)c);
 }
 
+#ifdef USE_CUSTOM_PRINTF
 #define PAD_RIGHT 1
 #define PAD_ZERO 2
 
@@ -222,7 +233,7 @@ int snprintf( char *buf, unsigned int count, const char *format, ... )
     va_start( args, format );
     return print( &buf, format, args );
 }
-
+#endif
 
 // UART2 interrupt
 void USART2_IRQHandler(void)

@@ -47,6 +47,7 @@ SRC      += $(USER_DIR)/WaveTable_Celesta_C5.c
 SRC      += $(USER_DIR)/WaveTable_Celesta_C6.c
 SRC      += $(USER_DIR)/AlgorithmTest.c
 SRC      += $(USER_DIR)/hal/uart_log.c
+SRC      += $(USER_DIR)/hal/gcc-stdio-retarget.c
 SRC      += $(USER_DIR)/hal/stm32_it.c
 SRC      += $(USER_DIR)/hal/hal.c
 SRC      += $(USER_DIR)/usb/usb_desc.c

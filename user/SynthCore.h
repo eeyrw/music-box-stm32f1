@@ -7,7 +7,7 @@
 
 typedef struct _SoundUnit
 {
-	uint32_t  wavetablePos;
+	uint32_t wavetablePos;
 	uint32_t waveTableAddress;
 	uint32_t waveTableLen;
 	uint32_t waveTableLoopLen;
@@ -17,7 +17,6 @@ typedef struct _SoundUnit
 	int32_t val;
 	int32_t sampleVal;
 	uint32_t envelopeLevel;
-	uint32_t envelopeLeve2l;
 }SoundUnit;
 
 
@@ -27,7 +26,7 @@ typedef struct _Synthesizer
     SoundUnit SoundUnitList[POLY_NUM];
 	int32_t mixOut;
     uint32_t lastSoundUnit;
-}Synthesizer;//__attribute__ ((packed)) Synthesizer;
+}Synthesizer;
 
 
 extern void SynthInit(Synthesizer* synth);

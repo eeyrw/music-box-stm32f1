@@ -73,9 +73,12 @@ void vTaskUsb(void *pvParameters)
     }
 }
 extern void SynthAsm(void* Address);
+extern void stdio_setup(void);
+extern void TestProcess(void);
 int main()
 {
     // init uart log
+    stdio_setup();
     uart_log_init();
     RCC_Configuration();
     GPIO_Configuration();

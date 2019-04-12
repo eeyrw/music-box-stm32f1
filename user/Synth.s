@@ -77,7 +77,7 @@ loopSynth:
     ldr r5,[pSoundUnit,#pWaveTableLen]
     lsl r5,r5,#8 @pWaveTableLen*=pWaveTableLen*256    
     cmp r6,r5
-    bne wavePosUpdateEnd
+    bgt wavePosUpdateEnd
     sub r6,r6,r5
     wavePosUpdateEnd:
     str r6,[pSoundUnit,#pWavetablePos]
