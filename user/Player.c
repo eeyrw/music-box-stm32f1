@@ -9,14 +9,14 @@ extern unsigned char Score[];
 void Player32kProc(Player *player)
 {
     SynthAsm(&(player->mainSynthesizer));
-    UpdateTick(player);
+    player->currentTick++;
 }
 
 void PlayerProcess(Player *player)
 {
 
     uint8_t temp;
-    
+
     if (player->decayGenTick >= 150)
     {
         GenDecayEnvlopeAsm(&(player->mainSynthesizer));
@@ -24,7 +24,7 @@ void PlayerProcess(Player *player)
     }
     if (player->status == STATUS_PLAYING)
     {
-        if(PlayNoteTimingCheck(player))
+        if ((player->currentTick >> 8) >= player->lastScoreTick)
         {
             do
             {
@@ -39,9 +39,24 @@ void PlayerProcess(Player *player)
                     NoteOnAsm(&(player->mainSynthesizer), temp);
                 }
             } while ((temp & 0x80) == 0);
+            
             PlayUpdateNextScoreTick(player);
         }
     }
+}
+
+void PlayUpdateNextScoreTick(Player *player)
+{
+    uint32_t tempU32;
+    uint8_t temp;
+    tempU32 = player->lastScoreTick;
+    do
+    {
+        temp = *(player->scorePointer);
+        player->scorePointer++;
+        tempU32 += temp;
+    } while (temp == 0xFF);
+    player->lastScoreTick = tempU32;
 }
 
 void PlayerPlay(Player *player)
