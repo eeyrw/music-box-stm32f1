@@ -29,6 +29,7 @@ void RCC_Configuration(void)
 {
     /* GPIOA, GPIOB clock enable */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC, ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 }
 
 void GPIO_Configuration(void)
@@ -39,6 +40,34 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
+}
+
+void TIM2_IRQHandler()
+{
+    if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+    {
+        TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+        // GPIO_ToggleBits(GPIOD, GPIO_Pin_12);
+    }
+}
+
+void TIMER_Config(void)
+{
+    TIM_TimeBaseInitTypeDef timerInitStructure;
+    timerInitStructure.TIM_Prescaler = 1;
+    timerInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
+    timerInitStructure.TIM_Period = 2249;
+    timerInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+    timerInitStructure.TIM_RepetitionCounter = 0;
+    TIM_TimeBaseInit(TIM2, &timerInitStructure);
+    TIM_Cmd(TIM2, ENABLE);
+
+    NVIC_InitTypeDef nvicStructure;
+    nvicStructure.NVIC_IRQChannel = TIM2_IRQn;
+    nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    nvicStructure.NVIC_IRQChannelSubPriority = 1;
+    nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvicStructure);
 }
 
 void vTaskFunction(void *pvParameters)
@@ -72,7 +101,7 @@ void vTaskUsb(void *pvParameters)
         }
     }
 }
-extern void SynthAsm(void* Address);
+extern void SynthAsm(void *Address);
 extern void stdio_setup(void);
 extern void TestProcess(void);
 int main()
@@ -96,7 +125,6 @@ int main()
     xTaskCreate(vTaskUsb, "Task usb", 1024, NULL, 1, NULL);
 
     vTaskStartScheduler();
-    
 
     while (1)
         ;

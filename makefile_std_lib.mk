@@ -23,6 +23,7 @@ SRC  += $(STM32F1_SRC_DIR)/stm32f10x_rcc.c
 SRC  += $(STM32F1_SRC_DIR)/stm32f10x_gpio.c
 SRC  += $(STM32F1_SRC_DIR)/stm32f10x_exti.c
 SRC  += $(STM32F1_SRC_DIR)/stm32f10x_usart.c
+SRC  += $(STM32F1_SRC_DIR)/stm32f10x_tim.c
 SRC  += $(STM32F1_SRC_DIR)/misc.c
 SRC  += $(STM32F1_USB_SRC_DIR)/usb_core.c
 SRC  += $(STM32F1_USB_SRC_DIR)/usb_init.c
