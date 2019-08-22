@@ -40,7 +40,7 @@
 
 
 .equ ENVELOP_LEN,256
-.equ POLY_NUM,5
+.equ POLY_NUM,32
 .equ pMixOut,SoundUnitSize*POLY_NUM
 .equ pLastSoundUnit,pMixOut+4
 
