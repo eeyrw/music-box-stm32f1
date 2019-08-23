@@ -48,6 +48,9 @@
 .equ WAVETABLE_CELESTA_C5_ATTACK_LEN,1998
 .equ WAVETABLE_CELESTA_C5_LOOP_LEN,610
 
+.equ TIM3_CCR2,0x40000438
+.equ TIM3_CCR3,0x4000043C
+
 .func SynthAsm
 SynthAsm:
 stmfd sp!,{r0-r1,r4-r11,lr}
@@ -62,8 +65,8 @@ mov pSoundUnit,r0
 loopSynth:
     ldr r5,[pSoundUnit,#pWaveTableAddress]
     ldr r6,[pSoundUnit,#pWavetablePos]
-    lsr r6,r6,#8 @wavetablePos*=wavetablePos/256
-    lsl r6,r6,#1 @wavetablePos/=2
+    lsr r6,r6,#8 @wavetablePos /= 256
+    lsl r6,r6,#1 @wavetablePos *= 2
     ldrsh r6,[r5,r6] @ Load signed 16bit sample to r6
     str r6,[pSoundUnit,#pSampleVal]
     ldr r7,[pSoundUnit,#pEnvelopeLevel]
@@ -90,6 +93,14 @@ add pSoundUnit,pSoundUnit,#SoundUnitSize
 bne loopSynth
 mov pSoundUnit,r0
 str mixOut,[pSoundUnit,pMixOut]
+asr mixOut,mixOut,#16 @ mixOut /=1<<16
+ssat mixOut,#9,mixOut @ 2^(9-1)<= mixOut <=2^(9-1)-1
+subs mixOut,mixOut,#0x80000000
+ldr r5,=#TIM3_CCR2
+strb mixOut,[r5]
+eor mixOut,#0xFFFFFFFF
+ldr r5,=#TIM3_CCR3
+strb mixOut,[r5]
 ldmfd sp!,{r0-r1,r4-r11,pc}
 .endfunc
 

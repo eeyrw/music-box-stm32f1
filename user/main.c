@@ -52,7 +52,6 @@ void TIM2_IRQHandler()
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         Player32kProc(&mPlayer);
-        TIM_SetCompare2(TIM3, ((mPlayer.mainSynthesizer.mixOut + 2147483648) >> 20) & 0xFF);
     }
     GPIO_ResetBits(GPIOC, GPIO_Pin_13);
 }
@@ -135,10 +134,8 @@ void vTaskFunction(void *pvParameters)
     debug("start task");
     while (1)
     {
-        // GPIO_ResetBits(GPIOC, GPIO_Pin_13);
         debug("led on ");
         vTaskDelay(100);
-        // GPIO_SetBits(GPIOC, GPIO_Pin_13);
         debug("led off ");
         vTaskDelay(100);
     }
