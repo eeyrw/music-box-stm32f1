@@ -94,7 +94,7 @@ bne loopSynth
 mov pSoundUnit,r0
 str mixOut,[pSoundUnit,pMixOut]
 @ asr mixOut,mixOut,#16 @ mixOut /=1<<16
-ssat mixOut,#8,mixOut,asr #16 @ mixOut /=1<<16, 2^(8-1)<= mixOut <=2^(8-1)-1
+ssat mixOut,#9,mixOut,asr #16 @ mixOut /=1<<16, 2^(9-1)<= mixOut <=2^(9-1)-1
 subs mixOut,mixOut,#0x80000000
 ldr r5,=#TIM3_CCR2
 strb mixOut,[r5]
