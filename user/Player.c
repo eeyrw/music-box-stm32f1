@@ -10,6 +10,8 @@ void Player32kProc(Player *player)
 {
     SynthAsm(&(player->mainSynthesizer));
     player->currentTick++;
+    if(player->decayGenTick<200)
+         player->decayGenTick+=1;
 }
 
 void PlayerProcess(Player *player)

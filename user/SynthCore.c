@@ -13,7 +13,7 @@ void SynthInit(Synthesizer* synth)
 	{
 		soundUnits[i].increment = 0;
 		soundUnits[i].wavetablePos = 0;
-		soundUnits[i].envelopeLevel = 255;
+		soundUnits[i].envelopeLevel = 0;
 		soundUnits[i].envelopePos = 0;
         soundUnits[i].val = 0;
 		soundUnits[i].waveTableAddress = (uint32_t)WaveTable_Celesta_C5;
@@ -75,7 +75,7 @@ void GenDecayEnvlopeC(Synthesizer* synth)
 	for (uint32_t i = 0; i < POLY_NUM; i++)
 	{
 		if((soundUnits[i].wavetablePos>>8) >=soundUnits[i].waveTableAttackLen &&
-				soundUnits[i].envelopePos <sizeof(EnvelopeTable)-1)
+				soundUnits[i].envelopePos <(sizeof(EnvelopeTable)-1))
 		{
 			soundUnits[i].envelopeLevel = EnvelopeTable[soundUnits[i].envelopePos];
 			soundUnits[i].envelopePos += 1;
