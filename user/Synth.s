@@ -179,6 +179,7 @@ and note,note,#0x7F
 lsl note,note,#1
 ldr r5,=WaveTable_Celesta_C5_Increment
 ldrh r5,[r5,note]
+cpsid i                @ PRIMASK=1 Disable all interrupt except NMI and Hardfault
 str r5,[pSynth,#pIncrement]
 mov r5,#0
 str r5,[pSynth,#pWavetablePos]
@@ -190,7 +191,7 @@ ldr r5,=#WAVETABLE_CELESTA_C5_LOOP_LEN
 str r5,[pSynth,#pWaveTableLoopLen]
 ldr r5,=#WAVETABLE_CELESTA_C5_ATTACK_LEN
 str r5,[pSynth,#pWaveTableAttackLen]
-
+cpsie i               @ PRIMASK=0 enable all interrupt
 mov pSynth,r0
 ldr r5,[pSynth,#pLastSoundUnit]
 add r5,r5,#1
