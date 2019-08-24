@@ -150,7 +150,7 @@ void vPlayTask(void *pvParameters)
     while (1)
     {
         PlayerProcess(&mPlayer);
-        //vTaskDelay(1);
+        vTaskDelay(1);
     }
 }
 
