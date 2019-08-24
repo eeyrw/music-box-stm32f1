@@ -93,12 +93,8 @@ add pSoundUnit,pSoundUnit,#SoundUnitSize
 bne loopSynth
 mov pSoundUnit,r0
 str mixOut,[pSoundUnit,#pMixOut]
-@ asr mixOut,mixOut,#16 @ mixOut /=1<<16
-ssat mixOut,#10,mixOut,asr #7 @ mixOut /=1<<16, 2^(9-1)<= mixOut <=2^(9-1)-1
-@ subs mixOut,mixOut,#0x80000000
+ssat mixOut,#10,mixOut,asr #6 @ mixOut /=1<<16, 2^(9-1)<= mixOut <=2^(9-1)-1
 add mixOut,mixOut,#512
-@ add mixOut,mixOut,#2147483648
-@ lsr mixOut,mixOut,#24 @ mixOut /=1<<16
 ldr r5,=#TIM3_CCR2
 strh mixOut,[r5]
 ldr r5,=#TIM3_CCR3
