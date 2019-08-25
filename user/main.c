@@ -21,12 +21,6 @@ uint32_t packet_sent = 1;
 uint32_t packet_receive = 1;
 Player mPlayer;
 
-void Delay(__IO uint32_t nCount)
-{
-    for (; nCount != 0; nCount--)
-        ;
-}
-
 void RCC_Configuration(void)
 {
     /* GPIOA, GPIOB clock enable */
@@ -90,13 +84,13 @@ void TIM3_PWM_Init(u16 arr, u16 psc)
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);                        //使能定时器3时钟
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE); //使能GPIO外设和AFIO复用功能模块时钟
 
-    GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE); //Timer3部分重映射  TIM3_CH2->PB5
+    //GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE); //Timer3部分重映射  TIM3_CH2->PB5
 
     //设置该引脚为复用输出功能,输出TIM3 CH2的PWM脉冲波形        GPIOB.5
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;       //TIM_CH2
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;       //TIM_CH2
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; //复用推挽输出
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOB, &GPIO_InitStructure); //初始化GPIO
+    GPIO_Init(GPIOA, &GPIO_InitStructure); //初始化GPIO
 
     //        GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE);
     //设置该引脚为复用输出功能,输出TIM3 CH3的PWM脉冲波形        GPIOB.0
@@ -122,7 +116,7 @@ void TIM3_PWM_Init(u16 arr, u16 psc)
     //初始化TIM3 Channel2 PWM模式
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;             //选择定时器模式:TIM脉冲宽度调制模式2
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;     //输出极性:TIM输出比较极性高
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;      //输出极性:TIM输出比较极性高
     TIM_OC3Init(TIM3, &TIM_OCInitStructure);                      //根据T指定的参数初始化外设TIM3 OC3
     TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
 
@@ -144,7 +138,7 @@ void vTaskFunction(void *pvParameters)
 void vPlayTask(void *pvParameters)
 {
     PlayerInit(&mPlayer);
-    PlayerPlay(&mPlayer);
+    //PlayerPlay(&mPlayer);
     TIM3_PWM_Init(1023, 0);
     TIMER_Config();
     while (1)
@@ -166,6 +160,14 @@ void vTaskUsb(void *pvParameters)
             {
                 if (packet_sent == 1)
                     CDC_Send_DATA((unsigned char *)Receive_Buffer, Receive_length);
+
+                for (int32_t i = 0; i < Receive_length; i += 4)
+                {
+                    if (Receive_Buffer[i] == 0x09 && Receive_Buffer[i + 3] != 0x00)
+                    {
+                        NoteOnAsm(&mPlayer.mainSynthesizer, Receive_Buffer[i + 2]);
+                    }
+                }
                 Receive_length = 0;
             }
         }

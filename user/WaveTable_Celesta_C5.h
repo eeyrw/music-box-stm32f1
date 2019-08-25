@@ -1,7 +1,7 @@
 #ifndef __WAVETABLE_CELESTA_C5__
 #define __WAVETABLE_CELESTA_C5__
 #include <stdint.h>
-// Sample's base frequency: 523.250000 Hz
+// Sample's base frequency: 523.629906 Hz
 // Sample's sample rate: 32000 Hz
 #define WAVETABLE_CELESTA_C5_LEN 2608
 #define WAVETABLE_CELESTA_C5_ATTACK_LEN 1998

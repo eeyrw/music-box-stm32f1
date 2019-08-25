@@ -1,7 +1,7 @@
 #ifndef __WAVETABLE_CELESTA_C6__
 #define __WAVETABLE_CELESTA_C6__
 #include <stdint.h>
-// Sample's base frequency: 1046.500000 Hz
+// Sample's base frequency: 1046.832025 Hz
 // Sample's sample rate: 32000 Hz
 #define WAVETABLE_CELESTA_C6_LEN 1358
 #define WAVETABLE_CELESTA_C6_ATTACK_LEN 838
