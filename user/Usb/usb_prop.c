@@ -35,7 +35,6 @@
   ******************************************************************************
   */
 
-
 /* Includes ------------------------------------------------------------------*/
 #include "usb_lib.h"
 #include "usb_conf.h"
@@ -51,71 +50,66 @@
 uint8_t Request = 0;
 
 LINE_CODING linecoding =
-  {
-    115200, /* baud rate*/
-    0x00,   /* stop bits-1*/
-    0x00,   /* parity - none*/
-    0x08    /* no. of bits 8*/
-  };
+    {
+        115200, /* baud rate*/
+        0x00,   /* stop bits-1*/
+        0x00,   /* parity - none*/
+        0x08    /* no. of bits 8*/
+};
 
 /* -------------------------------------------------------------------------- */
 /*  Structures initializations */
 /* -------------------------------------------------------------------------- */
 
 DEVICE Device_Table =
-  {
-    EP_NUM,
-    1
-  };
+    {
+        EP_NUM,
+        1};
 
 DEVICE_PROP Device_Property =
-  {
-    Midi_CDC_Device_init,
-    Midi_CDC_Device_Reset,
-    Midi_CDC_Device_Status_In,
-    Midi_CDC_Device_Status_Out,
-    Midi_CDC_Device_Data_Setup,
-    Midi_CDC_Device_NoData_Setup,
-    Midi_CDC_Device_Get_Interface_Setting,
-    Midi_CDC_Device_GetDeviceDescriptor,
-    Midi_CDC_Device_GetConfigDescriptor,
-    Midi_CDC_Device_GetStringDescriptor,
-    0,
-    0x40 /*MAX PACKET SIZE*/
-  };
+    {
+        Midi_CDC_Device_init,
+        Midi_CDC_Device_Reset,
+        Midi_CDC_Device_Status_In,
+        Midi_CDC_Device_Status_Out,
+        Midi_CDC_Device_Data_Setup,
+        Midi_CDC_Device_NoData_Setup,
+        Midi_CDC_Device_Get_Interface_Setting,
+        Midi_CDC_Device_GetDeviceDescriptor,
+        Midi_CDC_Device_GetConfigDescriptor,
+        Midi_CDC_Device_GetStringDescriptor,
+        0,
+        0x40 /*MAX PACKET SIZE*/
+};
 
 USER_STANDARD_REQUESTS User_Standard_Requests =
-  {
-    Midi_CDC_Device_GetConfiguration,
-    Midi_CDC_Device_SetConfiguration,
-    Midi_CDC_Device_GetInterface,
-    Midi_CDC_Device_SetInterface,
-    Midi_CDC_Device_GetStatus,
-    Midi_CDC_Device_ClearFeature,
-    Midi_CDC_Device_SetEndPointFeature,
-    Midi_CDC_Device_SetDeviceFeature,
-    Midi_CDC_Device_SetDeviceAddress
-  };
+    {
+        Midi_CDC_Device_GetConfiguration,
+        Midi_CDC_Device_SetConfiguration,
+        Midi_CDC_Device_GetInterface,
+        Midi_CDC_Device_SetInterface,
+        Midi_CDC_Device_GetStatus,
+        Midi_CDC_Device_ClearFeature,
+        Midi_CDC_Device_SetEndPointFeature,
+        Midi_CDC_Device_SetDeviceFeature,
+        Midi_CDC_Device_SetDeviceAddress};
 
 ONE_DESCRIPTOR Device_Descriptor =
-  {
-    (uint8_t*)Midi_CDC_Device_DeviceDescriptor,
-    MIDI_CDC_DEV_SIZ_DEVICE_DESC
-  };
+    {
+        (uint8_t *)Midi_CDC_Device_DeviceDescriptor,
+        MIDI_CDC_DEV_SIZ_DEVICE_DESC};
 
 ONE_DESCRIPTOR Config_Descriptor =
-  {
-    (uint8_t*)Midi_CDC_Device_ConfigDescriptor,
-    MIDI_CDC_DEV_SIZ_CONFIG_DESC
-  };
+    {
+        (uint8_t *)Midi_CDC_Device_ConfigDescriptor,
+        MIDI_CDC_DEV_SIZ_CONFIG_DESC};
 
 ONE_DESCRIPTOR String_Descriptor[4] =
-  {
-    {(uint8_t*)Midi_CDC_Device_StringLangID, MIDI_CDC_DEV_SIZ_STRING_LANGID},
-    {(uint8_t*)Midi_CDC_Device_StringVendor, MIDI_CDC_DEV_SIZ_STRING_VENDOR},
-    {(uint8_t*)Midi_CDC_Device_StringProduct, MIDI_CDC_DEV_SIZ_STRING_PRODUCT},
-    {(uint8_t*)Midi_CDC_Device_StringSerial, MIDI_CDC_DEV_SIZ_STRING_SERIAL}
-  };
+    {
+        {(uint8_t *)Midi_CDC_Device_StringLangID, MIDI_CDC_DEV_SIZ_STRING_LANGID},
+        {(uint8_t *)Midi_CDC_Device_StringVendor, MIDI_CDC_DEV_SIZ_STRING_VENDOR},
+        {(uint8_t *)Midi_CDC_Device_StringProduct, MIDI_CDC_DEV_SIZ_STRING_PRODUCT},
+        {(uint8_t *)Midi_CDC_Device_StringSerial, MIDI_CDC_DEV_SIZ_STRING_SERIAL}};
 
 /* Extern variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -209,7 +203,7 @@ void Midi_CDC_Device_Reset(void)
 
   /* Set this device to response on default address */
   SetDeviceAddress(0);
-  
+
   bDeviceState = ATTACHED;
 }
 
@@ -238,7 +232,7 @@ void Midi_CDC_Device_SetConfiguration(void)
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void Midi_CDC_Device_SetDeviceAddress (void)
+void Midi_CDC_Device_SetDeviceAddress(void)
 {
   bDeviceState = ADDRESSED;
 }
@@ -266,7 +260,8 @@ void Midi_CDC_Device_Status_In(void)
 * Return         : None.
 *******************************************************************************/
 void Midi_CDC_Device_Status_Out(void)
-{}
+{
+}
 
 /*******************************************************************************
 * Function Name  : Midi_CDC_Device_Data_Setup
@@ -277,7 +272,7 @@ void Midi_CDC_Device_Status_Out(void)
 *******************************************************************************/
 RESULT Midi_CDC_Device_Data_Setup(uint8_t RequestNo)
 {
-  uint8_t    *(*CopyRoutine)(uint16_t);
+  uint8_t *(*CopyRoutine)(uint16_t);
 
   CopyRoutine = NULL;
 
@@ -413,7 +408,7 @@ uint8_t *Midi_CDC_Device_GetLineCoding(uint16_t Length)
     pInformation->Ctrl_Info.Usb_wLength = sizeof(linecoding);
     return NULL;
   }
-  return(uint8_t *)&linecoding;
+  return (uint8_t *)&linecoding;
 }
 
 /*******************************************************************************
@@ -430,16 +425,16 @@ uint8_t *Midi_CDC_Device_SetLineCoding(uint16_t Length)
     pInformation->Ctrl_Info.Usb_wLength = sizeof(linecoding);
     return NULL;
   }
-  return(uint8_t *)&linecoding;
+  return (uint8_t *)&linecoding;
 }
 
 void InitSnStringWith64bitId(void)
 {
-  uint64_t id=HAL_GetHwSerialNum();
+  uint64_t id = HAL_GetHwSerialNum();
   if (id != 0)
   {
-    IntToUnicode (id & 0xFFFFFFFF, &Midi_CDC_Device_StringSerial[2] , 8);
-    IntToUnicode ((id>>32) & 0xFFFFFFFF, &Midi_CDC_Device_StringSerial[18], 4);
+    IntToUnicode(id & 0xFFFFFFFF, &Midi_CDC_Device_StringSerial[2], 8);
+    IntToUnicode((id >> 32) & 0xFFFFFFFF, &Midi_CDC_Device_StringSerial[18], 4);
   }
 }
 /*******************************************************************************
@@ -449,26 +444,25 @@ void InitSnStringWith64bitId(void)
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void IntToUnicode (uint32_t value , uint8_t *pbuf , uint8_t len)
+void IntToUnicode(uint32_t value, uint8_t *pbuf, uint8_t len)
 {
   uint8_t idx = 0;
-  
-  for( idx = 0 ; idx < len ; idx ++)
+
+  for (idx = 0; idx < len; idx++)
   {
-    if( ((value >> 28)) < 0xA )
+    if (((value >> 28)) < 0xA)
     {
-      pbuf[ 2* idx] = (value >> 28) + '0';
+      pbuf[2 * idx] = (value >> 28) + '0';
     }
     else
     {
-      pbuf[2* idx] = (value >> 28) + 'A' - 10; 
+      pbuf[2 * idx] = (value >> 28) + 'A' - 10;
     }
-    
+
     value = value << 4;
-    
-    pbuf[ 2* idx + 1] = 0;
+
+    pbuf[2 * idx + 1] = 0;
   }
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
