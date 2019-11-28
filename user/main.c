@@ -40,14 +40,14 @@ void GPIO_Configuration(void)
 
 void TIM2_IRQHandler()
 {
-    GPIO_SetBits(GPIOC, GPIO_Pin_13);
+
 
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
     {
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
         Player32kProc(&mPlayer);
     }
-    GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+    //GPIO_ResetBits(GPIOC, GPIO_Pin_13);
 }
 
 void TIMER_Config(void)
@@ -129,8 +129,10 @@ void vTaskFunction(void *pvParameters)
     while (1)
     {
         debug("led on ");
+            GPIO_SetBits(GPIOC, GPIO_Pin_13);
         vTaskDelay(100);
         debug("led off ");
+            GPIO_ResetBits(GPIOC, GPIO_Pin_13);
         vTaskDelay(100);
     }
 }
@@ -138,7 +140,7 @@ void vTaskFunction(void *pvParameters)
 void vPlayTask(void *pvParameters)
 {
     PlayerInit(&mPlayer);
-    //PlayerPlay(&mPlayer);
+    PlayerPlay(&mPlayer);
     TIM3_PWM_Init(1023, 0);
     TIMER_Config();
     while (1)
@@ -171,6 +173,7 @@ void vTaskUsb(void *pvParameters)
                 Receive_length = 0;
             }
         }
+        vTaskDelay(1);
     }
 }
 extern void stdio_setup(void);
@@ -184,16 +187,16 @@ int main()
     GPIO_Configuration();
 
     Set_System();
-    Set_USBClock();
-    USB_Interrupts_Config();
-    USB_Init();
+    //Set_USBClock();
+    //USB_Interrupts_Config();
+    //USB_Init();
 
     debug("start main ");
     const char *pcTextForTask1 = "Task1 is running\r\n";
     // TestProcess();
 
     xTaskCreate(vTaskFunction, "Task 1", 512, (void *)pcTextForTask1, 1, NULL);
-    xTaskCreate(vTaskUsb, "Task usb", 1024, NULL, 1, NULL);
+    //xTaskCreate(vTaskUsb, "Task usb", 1024, NULL, 1, NULL);
     xTaskCreate(vPlayTask, "Task play", 512, NULL, 1, NULL);
     vTaskStartScheduler();
 
